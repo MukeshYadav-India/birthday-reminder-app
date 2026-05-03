@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum EventType {
+  BIRTHDAY
+  ANNIVERSARY
+}
+
+enum ReminderType {
+  THREE_DAYS
+  ONE_DAY
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  passwordHash String
+  events       Event[]
+  reminderLogs ReminderLog[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Event {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  type      EventType
+  month     Int
+  day       Int
+  year      Int?
+  notes     String?
+  reminders ReminderLog[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([userId, month, day])
+}
+
+model ReminderLog {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId      String
+  event        Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reminderDate DateTime
+  reminderType ReminderType
+  sentAt       DateTime?
+  channel      String         @default("EMAIL")
+  status       ReminderStatus @default(PENDING)
+  errorMessage String?
+
+  @@unique([eventId, reminderType, reminderDate])
+  @@index([userId, status, reminderDate])
+}
