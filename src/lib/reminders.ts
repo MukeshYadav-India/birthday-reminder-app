@@ -56,14 +56,25 @@ export async function processReminders() {
           },
         });
       } catch (err) {
-        await prisma.reminderLog.create({
-          data: {
+        await prisma.reminderLog.upsert({
+          where: {
+            eventId_reminderType_reminderDate: {
+              eventId: event.id,
+              reminderType: check.type,
+              reminderDate: today,
+            },
+          },
+          create: {
             userId: event.userId,
             eventId: event.id,
             reminderType: check.type,
             reminderDate: today,
             status: ReminderStatus.FAILED,
             channel: "EMAIL",
+            errorMessage: err instanceof Error ? err.message : "Unknown error",
+          },
+          update: {
+            status: ReminderStatus.FAILED,
             errorMessage: err instanceof Error ? err.message : "Unknown error",
           },
         });
