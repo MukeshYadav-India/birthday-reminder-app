@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       ...raw,
       month: Number(raw.month),
       day: Number(raw.day),
-      year: raw.year === null || raw.year === "" ? null : Number(raw.year),
+      year: raw.year != null && raw.year !== "" ? Number(raw.year) : null,
       notes: raw.notes === "" ? null : raw.notes,
     };
 
