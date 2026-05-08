@@ -53,9 +53,9 @@ export default function EventForm() {
       </select>
       <div className="grid grid-cols-3 gap-2">
         <input className="rounded-md border px-3 py-2" type="number" placeholder="Month" value={form.month}
-          onChange={(e) => setForm({ ...form, month: Number(e.target.value) })} />
+          onChange={(e) => setForm({ ...form, month: e.target.value })} />
         <input className="rounded-md border px-3 py-2" type="number" placeholder="Day" value={form.day}
-          onChange={(e) => setForm({ ...form, day: Number(e.target.value) })} />
+          onChange={(e) => setForm({ ...form, day: e.target.value })} />
         <input className="rounded-md border px-3 py-2" type="number" placeholder="Year" value={form.year}
           onChange={(e) => setForm({ ...form, year: e.target.value })} />
       </div>
