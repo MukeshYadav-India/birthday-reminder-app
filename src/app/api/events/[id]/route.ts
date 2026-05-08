@@ -11,11 +11,12 @@ async function resolveUser(req: Request) {
   return await getCurrentUser();
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const user = await resolveUser(req);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.event.findFirst({ where: { id: params.id, userId: user.id } });
+  const existing = await prisma.event.findFirst({ where: { id, userId: user.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const parsed = eventSchema.safeParse(await req.json());
@@ -32,20 +33,21 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 
   const event = await prisma.event.update({
-    where: { id: params.id },
+    where: { id },
     data: { name, type, month, day, year: year ?? null, notes: notes ?? null },
   });
 
   return NextResponse.json({ event });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const user = await resolveUser(req);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.event.findFirst({ where: { id: params.id, userId: user.id } });
+  const existing = await prisma.event.findFirst({ where: { id, userId: user.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  await prisma.event.delete({ where: { id: params.id } });
+  await prisma.event.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }

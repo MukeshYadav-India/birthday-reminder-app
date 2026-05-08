@@ -9,8 +9,8 @@ export default function EventForm() {
   const [form, setForm] = useState({
     name: "",
     type: "BIRTHDAY",
-    month: 1,
-    day: 1,
+    month: "1",
+    day: "1",
     year: "",
     notes: "",
   });
@@ -34,7 +34,7 @@ export default function EventForm() {
     setLoading(false);
 
     if (res.ok) {
-      setForm({ name: "", type: "BIRTHDAY", month: 1, day: 1, year: "", notes: "" });
+      setForm({ name: "", type: "BIRTHDAY", month: "1", day: "1", year: "", notes: "" });
       router.refresh();
     } else {
       alert("Failed to save event");
