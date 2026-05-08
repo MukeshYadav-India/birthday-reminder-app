@@ -20,7 +20,8 @@ export default function RegisterPage() {
       router.push("/dashboard");
       router.refresh();
     } else {
-      alert("Registration failed");
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Registration failed");
     }
   }
 
